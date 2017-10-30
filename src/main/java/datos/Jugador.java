@@ -6,16 +6,18 @@
 package datos;
 
 import java.io.Serializable;
+import javax.websocket.Session;
 
 /**
  *
  * @author Cesar
  */
-public class Jugador implements Serializable{
-    
+public class Jugador implements Serializable {
+
     private String estado;
     private String id;
     private String x, y;
+    public Session session;
 
     public Jugador() {
     }
@@ -43,7 +45,7 @@ public class Jugador implements Serializable{
     public void setY(String y) {
         this.y = y;
     }
-    
+
     public String getEstado() {
         return estado;
     }

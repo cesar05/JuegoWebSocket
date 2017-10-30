@@ -10,6 +10,7 @@ import datos.Jugador;
 import datos.PosicionDecode;
 import datos.PosicionEncode;
 import java.io.IOException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
@@ -28,8 +29,9 @@ public class ServerSocket {
     /**
      * Lista de usuarios conectados
      */
-    public static final List<Session> CONECTADOS = new ArrayList<Session>();
-
+    
+    public static final List<Jugador> JUGADORESCECTADOS=new ArrayList<Jugador>();
+    
     public ServerSocket() {
         System.out.println("Se instancia objeto");
     }
@@ -44,20 +46,31 @@ public class ServerSocket {
     public void establecerConexion(Session session) throws IOException {
         Gson g=new Gson();
         Jugador jugador;
-        String json;        
-        for (Session conectado : CONECTADOS) {
+        String json;
+        
+        for (Jugador jugadorConectado : JUGADORESCECTADOS) {
             jugador=new Jugador();
-            jugador.setEstado("NuevoJugadorEnLinea");            
+            jugador.setEstado("NuevoJugadorEnLinea");      
+            jugador.setX(jugadorConectado.getX());
+            jugador.setY(jugadorConectado.getY());
             json=g.toJson(jugador, Jugador.class);
-            conectado.getBasicRemote().sendText(json);
+            System.out.println(json);
+            jugadorConectado.session.getBasicRemote().sendText(json);
             session.getAsyncRemote().sendText(json);
         }
-        CONECTADOS.add(session);
+        
         jugador=new Jugador();
         jugador.setEstado("NuevoJugador");
-        jugador.setId(""+(CONECTADOS.size() - 1));
+        jugador.setId(""+(JUGADORESCECTADOS.size()));
+        jugador.setX("0");
+        jugador.setY("0");        
+        System.out.println("entro 555");
         json=g.toJson(jugador, Jugador.class);
-        session.getBasicRemote().sendText(json);
+        System.out.println(json);
+        jugador.session=session;
+        JUGADORESCECTADOS.add(jugador);
+        session.getBasicRemote().sendText(json);        
+        
     }
 
     /**
@@ -71,18 +84,25 @@ public class ServerSocket {
         Gson gson=new Gson();
         Jugador jugador=gson.fromJson(datos, Jugador.class);
         int i=0;
-        for (Session session : CONECTADOS) {
-            //Valida para no enviar datos al mismo jugador
-            if(i!=Integer.valueOf(jugador.getId())){
-                session.getBasicRemote().sendObject(datos);
+        
+        for (Jugador jugadorConectado : JUGADORESCECTADOS) {
+            
+            //Actualiza la posicion de jugador que se mueve en la lista
+            if(i==Integer.valueOf(jugador.getId())){
+                jugadorConectado.setX(jugador.getX());
+                jugadorConectado.setY(jugador.getY()); 
+            }
+            else{//Envia nueva posicion a los demas jugadores de la lista
+                jugadorConectado.session.getBasicRemote().sendObject(datos);
             }
             i++;
-        }       
+        }
+        
     }
 
     @OnClose
     public void handleClose(Session session) {
-        CONECTADOS.remove(session);
+        //CONECTADOS.remove(session);
         System.out.println("Se cierra la conexion con usuario X");
     }
 
