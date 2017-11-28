@@ -38,47 +38,29 @@ public class UsuarioServlet extends HttpServlet {
  
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType("text/plain;charset=UTF-8");
         String strClientes="";
         try{
             String method=request.getParameter("method");
-            Usuarios usuarios=new Usuarios();
-            usuarios.setId(1234);
-            usuarios.setNombre("cesar");
-            usuarios.setAvatar("avatar");
-            usuarios.setEmail("cesar@gmail.com");
+            
+            Usuarios usuarios=new Usuarios();            
+            int id=Integer.valueOf(request.getParameter("id"));
+            usuarios.setId(id);
+            usuarios.setNombre(request.getParameter("nombre"));
+            usuarios.setAvatar(request.getParameter("avatar"));
+            usuarios.setEmail(request.getParameter("email"));
+            //usuarios.setFechaNacimiento(new Date(request.getParameter("fechaNacimiento")));
             usuarios.setFechaNacimiento(new Date());
             usuariosFacade.create(usuarios);
             
-            if(method.equals("GET")){
-                strClientes="{\"estado\":true,\"msj\":\"Opción no valida\"}";
-                /*List<Cliente>  clientes=clienteFacade.findAll();
-                //response.getWriter().write("{\"nombre\":\"hola\"}");
-                strClientes="[";
-                for (Cliente cliente : clientes) {
-                    strClientes+="{";
-                    strClientes+="\"id\":\""+cliente.getId()+"\",";
-                    strClientes+="\"nombre\":\""+cliente.getNombre()+"\",";
-                    strClientes+="\"apellidos\":\""+cliente.getApellidos()+"\",";
-                    strClientes+="\"direccion\":\""+cliente.getDireccion()+"\",";
-                    strClientes+="\"email\":\""+cliente.getEmail()+"\",";
-                    strClientes+="\"telefono\":\""+cliente.getTelefono()+"\",";
-                    strClientes+="\"celular\":\""+cliente.getCelular()+"\"";
-                    strClientes+="},";
-                }
-                strClientes=strClientes.substring(0, strClientes.length()-1);
-                strClientes+="]";*/
-            }
-            
-            else{
-                strClientes="{\"estado\":true,\"msj\":\"Opción no valida\"}";
-            }
+            strClientes="Registro guardado correctamente";
+               
         }
         catch(PersistenceException e){
-            strClientes="{\"estado\":false,\"msj\":\""+e.getMessage()+"\"}";
+            strClientes=e.getMessage();
         }
         catch(Exception e){
-            strClientes="{\"estado\":false,\"msj\":\""+e.getMessage()+"\"}";
+            strClientes=e.getMessage();
         }
         finally{
             response.getWriter().write(strClientes);

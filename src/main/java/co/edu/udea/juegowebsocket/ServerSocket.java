@@ -102,6 +102,7 @@ public class ServerSocket {
 
     @OnClose
     public void handleClose(Session session) {
+        JUGADORESCECTADOS.remove(JUGADORESCECTADOS.size()-1);
         //CONECTADOS.remove(session);
         System.out.println("Se cierra la conexion con usuario X");
     }
