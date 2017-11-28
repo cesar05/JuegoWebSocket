@@ -43,7 +43,7 @@ public class UsuarioServlet extends HttpServlet {
         try{
             String method=request.getParameter("method");
             Usuarios usuarios=new Usuarios();
-            usuarios.setId(1045);
+            usuarios.setId(1234);
             usuarios.setNombre("cesar");
             usuarios.setAvatar("avatar");
             usuarios.setEmail("cesar@gmail.com");
